@@ -208,7 +208,7 @@ public class SessionSemanticsTest {
 
         // Note that a constraint violation is a non-transient error, so the driver retry logic is not invoked.
         // Transactions functions should always be idempotent, in case the driver retry logic is invoked.
-        // This implies that when the driver retry logic is invoked, transaction rollback is not performed as it is here in this test.
+        // This implies that when the error is transient, transaction rollback is not performed as it is here in this test.
 
         // per https://neo4j.com/docs/java-manual/current/session-api/#java-driver-simple-transaction-fn
         // Before writing a transaction function it is important to ensure that it is designed to be idempotent. This is because a function may be executed multiple times if initial runs fail.
