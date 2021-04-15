@@ -204,6 +204,37 @@ public class SessionSemanticsTest {
     }
 
     @Test
+    public void transactionFunctionMultiQueryFailRollback() {
+        try (Driver driver = GraphDatabase.driver(server.boltURI(), AuthTokens.basic("neo4j", ""), config)) {
+
+            try {
+                try (Session session = driver.session()) {
+                    session.writeTransaction(tx -> {
+                        Value single = tx.run(CREATE_RETURN_USER, parameters("name", "bob")).single().get(0);
+                        assertThat(single.asString(), equalTo("bob"));
+
+                        // this should fail but we need to trap it at the outer session level if we want to continue
+                        tx.run(CREATE_RETURN_USER, parameters("name", "alice"));
+
+                        return 1;
+                    });
+                }
+            } catch (ClientException e) {
+                assertThat(e.getMessage(), containsString("already exists with label"));
+            }
+
+            try (Session session = driver.session()) {
+                session.readTransaction(tx -> {
+                    Result result = tx.run(MATCH_RETURN_USER, parameters("name", "bob"));
+                    assertThat(result.hasNext(), equalTo(false));
+
+                    return 1;
+                });
+            }
+        }
+    }
+
+    @Test
     public void unmanagedTransactionAutoRollbackWithoutCommit() {
 
         // tx.commit()
