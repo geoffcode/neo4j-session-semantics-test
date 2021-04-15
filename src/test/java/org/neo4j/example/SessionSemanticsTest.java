@@ -61,7 +61,7 @@ public class SessionSemanticsTest {
                 assertThat(single.asString(), equalTo("bob"));
 
                 try {
-                    single = session.run(CREATE_RETURN_USER, parameters("name", "alice")).single().get(0);
+                    session.run(CREATE_RETURN_USER, parameters("name", "alice")).single();
                     assertThat("This should have failed.", false);
                 } catch (ClientException e) {
                     assertThat(e.getMessage(), containsString("already exists with label"));
@@ -212,15 +212,18 @@ public class SessionSemanticsTest {
                     session.writeTransaction(tx -> {
                         Value single = tx.run(CREATE_RETURN_USER, parameters("name", "bob")).single().get(0);
                         assertThat(single.asString(), equalTo("bob"));
-
-                        // this should fail but we need to trap it at the outer session level if we want to continue
-                        tx.run(CREATE_RETURN_USER, parameters("name", "alice"));
+                        try {
+                            tx.run(CREATE_RETURN_USER, parameters("name", "alice")).single();
+                            assertThat("This should have failed.", false);
+                        } catch (ClientException e) {
+                            assertThat(e.getMessage(), containsString("already exists with label"));
+                        }
 
                         return 1;
                     });
                 }
             } catch (ClientException e) {
-                assertThat(e.getMessage(), containsString("already exists with label"));
+                assertThat(e.getMessage(), containsString("Transaction can't be committed. It has been rolled back"));
             }
 
             try (Session session = driver.session()) {
