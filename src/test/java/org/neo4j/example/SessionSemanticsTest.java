@@ -206,14 +206,14 @@ public class SessionSemanticsTest {
     @Test
     public void transactionFunctionMultiQueryFailRollback() {
 
-        // Note that a constraint violation is a non-transient error, so the driver retry logic is not invoked.
-        // Transactions functions should always be idempotent, in case the driver retry logic is invoked.
-        // This implies that when the error is transient, transaction rollback is not performed as it is here in this test.
+        // Here we simply demonstrate that all the tx queries are rolled back when a non-transient error occurs.
 
+        // Note that a constraint violation is a non-transient error, so the driver retry logic is not invoked here.
+        // Transaction functions should always be idempotent, in case the driver retry logic is invoked.
         // per https://neo4j.com/docs/java-manual/current/session-api/#java-driver-simple-transaction-fn
-        // Before writing a transaction function it is important to ensure that it is designed to be idempotent. This is because a function may be executed multiple times if initial runs fail.
-        // When a transaction fails, the driver retry logic is invoked. For several failure cases, the transaction can be immediately retried against a different server. These cases include connection issues,
-        // server role changes (e.g. leadership elections) and transient errors.
+
+        // This implies that when an error is transient, transaction rollback is not performed between each try?
+        // But rollback should still be performed if failures are still present after retry...
 
         try (Driver driver = GraphDatabase.driver(server.boltURI(), AuthTokens.basic("neo4j", ""), config)) {
 
