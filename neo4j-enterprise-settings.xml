@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<settings xsi:schemaLocation='http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd'
+          xmlns='http://maven.apache.org/SETTINGS/1.0.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+
+    <servers>
+        <server>
+            <id>neo4j-enterprise</id>
+            <username>neo4j-enterprise</username>
+            <password>c38518cfdf23bcf5db00efae7d217c455d24f1d1</password>
+        </server>
+    </servers>
+
+    <profiles>
+        <profile>
+            <id>neo4j-enterprise</id>
+            <repositories>
+                <repository>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <id>mvn-central</id>
+                    <name>mvn-central</name>
+                    <url>https://repo1.maven.org/maven2/</url>
+                </repository>
+                <repository>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <id>neo4j-enterprise</id>
+                    <name>neo4j-enterprise</name>
+                    <url>http://m2.neo4j.com/enterprise</url>
+                </repository>
+             </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <id>neo4j-enterprise</id>
+                    <name>neo4j-enterprise-plugins</name>
+                    <url>http://m2.neo4j.com/enterprise</url>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+    <activeProfiles>
+        <activeProfile>neo4j-enterprise</activeProfile>
+    </activeProfiles>
+</settings>
